@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ImageFileService } from './services/image-file.service';
+import { ImageFileService } from '../services/image-file.service';
 declare var JMuxer: any;
 declare var PCMPlayer: any;
 declare var msgpack: any;
 declare var fdkAac: any;
+
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  selector: 'app-ver1',
+  templateUrl: './ver1.component.html',
+  styleUrls: ['./ver1.component.scss']
 })
-export class AppComponent implements OnInit {
-  title = 'PlayerClient';
+export class Ver1Component implements OnInit {
+  title = 'ver1';
   jmuxer: any;
   pcmPlayer: any;
   files = ["1557749607.gop", "1557749608.gop", "1557749609.gop", "1557749610.gop", "1557749611.gop", "1557749612.gop", "1557749613.gop", "1557749614.gop", "1557749615.gop", "1557749616.gop", "1557749617.gop", "picture.jpg"]; // 蔡依林
@@ -20,8 +21,26 @@ export class AppComponent implements OnInit {
     private http: HttpClient,
     private imageFileService: ImageFileService
   ) { }
-  ngOnInit(): void {
 
+  ngOnInit() {
+    this.jmuxer = new JMuxer({
+      node: 'player',
+      mode: 'video', /* available values are: both, audio and video */
+      debug: true,
+      // fps :30
+    });
+    this.pcmPlayer = new PCMPlayer({
+      encoding: '16bitInt',
+      channels: 1,
+      sampleRate: 8000,
+      flushingTime: 0
+    });
+    let gopFiles = this.files.slice();
+    let flag = false;  // key flag container
+    // star feed video data ...
+    // if (gopFiles.length > 0) {
+    //   this.filegop(gopFiles, flag, this.jmuxer, /* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], this.pcmPlayer);
+    // }
   }
   //
   setHeader(pcm_combine_arr) {
@@ -437,4 +456,3 @@ export class AppComponent implements OnInit {
   }
 
 }
-

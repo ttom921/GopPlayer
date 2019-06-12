@@ -7,10 +7,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { SharedAngularMaterialModule } from './share/shared-angular-material/shared-angular-material.module';
+import { Disp264Component } from './disp264/disp264.component';
+import { Ver1Component } from './ver1/ver1.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    Disp264Component,
+    Ver1Component
   ],
   imports: [
     HttpClientModule,
@@ -21,6 +25,7 @@ import { SharedAngularMaterialModule } from './share/shared-angular-material/sha
     AppRoutingModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  exports: [Disp264Component, Ver1Component]
 })
 export class AppModule { }

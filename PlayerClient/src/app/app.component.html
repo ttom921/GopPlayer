@@ -1,18 +1,1 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<mat-grid-tile-header>
-  <span>{{title}}</span>
-  <div id="inputdiv">
-
-    <input type="file" multiple="multiple" id="file" #file (change)="Upload(file)">
-  </div>
-  <!-- <button mat-icon-button color="primary" (click)="OnChannleEvent()">
-      <mat-icon>pageview</mat-icon>
-    </button> -->
-
-</mat-grid-tile-header>
-<div style="text-align:center">
-  <h1>
-    Welcome to {{ title }}!
-  </h1>
-  <video id="player" width="640" height="304" autoplay controls></video>
-</div>
+<router-outlet></router-outlet>

@@ -1,0 +1,14 @@
+<mat-grid-tile-header>
+  {{title}}
+  <div id="inputdiv">
+
+    <input type="file" multiple="multiple" id="file" #file (change)="Upload(file)">
+  </div>
+  <!-- <button mat-icon-button color="primary" (click)="OnChannleEvent()">
+      <mat-icon>pageview</mat-icon>
+    </button> -->
+
+</mat-grid-tile-header>
+<div style="text-align:center">
+  <video id="player" width="640" height="304" autoplay controls></video>
+</div>
