@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ImageFileService } from './services/image-file.service';
 declare var JMuxer: any;
 declare var PCMPlayer: any;
 declare var msgpack: any;
@@ -11,15 +12,23 @@ declare var fdkAac: any;
 })
 export class AppComponent implements OnInit {
   title = 'PlayerClient';
-  constructor(private http: HttpClient) { }
+  jmuxer: any;
+  pcmPlayer: any;
+  files = ["1557749607.gop", "1557749608.gop", "1557749609.gop", "1557749610.gop", "1557749611.gop", "1557749612.gop", "1557749613.gop", "1557749614.gop", "1557749615.gop", "1557749616.gop", "1557749617.gop", "picture.jpg"]; // 蔡依林 
+  videodataarray = [];
+  audiodataarray = [];
+  constructor(
+    private http: HttpClient,
+    private imageFileService: ImageFileService
+  ) { }
   ngOnInit(): void {
-    var jmuxer = new JMuxer({
+    this.jmuxer = new JMuxer({
       node: 'player',
       mode: 'video', /* available values are: both, audio and video */
       debug: true,
       // fps :30
     });
-    var pcmPlayer = new PCMPlayer({
+    this.pcmPlayer = new PCMPlayer({
       encoding: '16bitInt',
       channels: 1,
       sampleRate: 8000,
@@ -28,9 +37,9 @@ export class AppComponent implements OnInit {
     let gopFiles = this.files.slice();
     let flag = false;  // key flag container
     // star feed video data ... 
-    if (gopFiles.length > 0) {
-      this.filegop(gopFiles, flag, jmuxer, /* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], pcmPlayer);
-    }
+    // if (gopFiles.length > 0) {
+    //   this.filegop(gopFiles, flag, this.jmuxer, /* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], this.pcmPlayer);
+    // }
   }
   //
   setHeader(pcm_combine_arr) {
@@ -99,7 +108,7 @@ export class AppComponent implements OnInit {
     return (decoded * 8) * -1;
   }
   //
-  files = ["1557749607.gop", "1557749608.gop", "1557749609.gop", "1557749610.gop", "1557749611.gop", "1557749612.gop", "1557749613.gop", "1557749614.gop", "1557749615.gop", "1557749616.gop", "1557749617.gop", "picture.jpg"]; // 蔡依林 
+
 
   filegop(gopFiles, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer) {
     let files = gopFiles;
@@ -192,5 +201,266 @@ export class AppComponent implements OnInit {
         }
       });
   }
+  // 發送圖片
+  public Upload(file: HTMLInputElement) {
+    if (file.value.length === 0) return;
+    //讀所有的圖檔
+    const uploadPromises = [];
+    const files: FileList = file.files;
+    let Bufferary = new ArrayBuffer(files.length);
+    for (let index = 0; index < files.length; index++) {
+      const element = files[index];
+      //fmtmsg = element.name;
+      //console.log(fmtmsg);
+      let uploadPromise = this.imageFileService.GetBufferFromFile(element);
+      uploadPromises.push(uploadPromise);
+    }
+    Promise.all(uploadPromises).then(result => {
+      for (let i = 0; i < files.length; i++) {
+        Bufferary[i] = result[i];
+        //console.log(Bufferary[i]);
+      }
+
+      //#region 使用遞回
+      let maximgnum = files.length;
+      let count = 0;
+
+      this._getData(count, maximgnum, Bufferary, false, this.jmuxer,/* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], this.pcmPlayer, this.videodataarray, this.audiodataarray);
+
+
+
+
+
+
+      // //#endregion 使用遞回
+
+      // //開始發射
+      // let maximgnum = files.length;
+      // let count = 0;
+      // let video_buffer = [];
+      // let audio_buffer = [];
+      // let key_buffer = [];
+      // let current_video = [];
+      // let current_audio = [];
+      // let i_count = 0;
+      // // for (let count = 0; count < maximgnum; count++) {
+      // //   this._sendData(count, maximgnum, Bufferary[count], false, this.jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, this.pcmPlayer);
+
+      // // }
+      // setInterval(() => {
+      //   //this.filegop(gopFiles, flag, jmuxer, /* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], pcmPlayer);
+      //   this._sendData(count, maximgnum, Bufferary[count], false, this.jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, this.pcmPlayer);
+      //   count = (count + 1) % maximgnum;
+      // }, 66);
+
+
+
+    });
+  }
+  _getData(count: number, maximgnum: number, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer, store_audio_buffer) {
+    if ((count + 1) > maximgnum) return;
+    var m = msgpack.decode(new Uint8Array(Bufferary[count]));
+    var pcm_combine_arr = [];
+    var h264_combine_arr = [];
+    // console.log(m.gop);
+    for (var num in m.gop) {
+      // 找出第一個為true的key
+      if (m.gop[num].key == true) {
+        flag = true;
+      }
+      if (flag) {
+        // feed video data
+        // h264_combine_arr = h264_combine_arr.concat(Array.from(m.gop[num].v));
+
+        video_buffer[video_buffer.length] = Array.from(m.gop[num].v);
+        if (m.gop[num].key) {
+          key_buffer.push('I');
+        }
+        else {
+          key_buffer.push('P');
+        }
+        // video_buffer.push(m.gop[num].key);
+
+        // feed audio data
+        if (m.gop[num].a) {
+          var pcm_data = this.decode(m.gop[num].a);
+          var pcm_data_arr = this.intTobytesArr(Array.from(pcm_data));
+          // pcm_combine_arr = pcm_combine_arr.concat(pcm_data_arr);
+          audio_buffer[audio_buffer.length] = pcm_data_arr;
+          // pcmPlayer.feed(pcm_data);  
+        }
+      }
+    }
+    // console.log(audio_buffer);
+    var current_key;
+    var temp_video_buffer = video_buffer.slice(0); // clone video_buffer
+    var temp_audio_buffer = audio_buffer.slice(0); // clone audio_buffer
+    var key_buffer_length = key_buffer.length;
+    for (var i = 0; i < key_buffer_length; i++) {
+      current_key = key_buffer[0];
+      if (current_key == 'I')
+        i_count++;
+      if (i_count == 2)
+        break;
+      current_video = current_video.concat(temp_video_buffer[i]);
+      if (temp_audio_buffer[i])
+        current_audio = current_audio.concat(temp_audio_buffer[i]);
+      key_buffer.shift();
+      video_buffer.shift();
+      if (temp_audio_buffer[i])
+        audio_buffer.shift();
+      // console.log('.....................................');
+    }
+    //console.log("count=" + count + " maximgnum=" + maximgnum);
+    if (i_count == 2 || (count + 1) === maximgnum) {
+      var pcm_header = this.setHeader(current_audio);
+      pcm_header = pcm_header.concat(Array.from(current_audio));
+      fdkAac(new Uint8Array(pcm_header), function (err, aac) {
+        if (aac) {
+          const file = ('File' in self)
+            ? new File([aac.buffer], 'test.aac', { type: 'audio/aac' })
+            // Safari does not have File in workers
+            : new Blob([aac.buffer], { type: 'audio/aac' })
+          const event = URL.createObjectURL(file);
+          var audom = document.getElementById("myaudio");
+          if (audom === null) {
+            var node = document.createElement('audio');
+            node.setAttribute("id", "myaudio")
+            node.setAttribute("src", event);
+            node.setAttribute("controls", "true");
+            document.body.appendChild(node);
+          }
+          store_audio_buffer.push(aac.buffer);
+          store_video_buffer.push(current_video);
+
+          // jmuxer.feed({
+          //   video: new Uint8Array(current_video),
+          //   audio: aac,
+          //   duration: 1000
+          // });
+        }
+      });
+      current_video = [];
+      current_audio = [];
+      i_count = 0;
+    }
+    count++;
+    if (count < maximgnum - 1) {
+      this._getData(count, maximgnum, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer, store_audio_buffer);
+    } else {
+      console.log("data send end " + this.videodataarray.length);
+      console.log("data send end " + this.audiodataarray.length);
+      let index = 0;
+      setInterval(() => {
+
+        this.jmuxer.feed({
+          video: new Uint8Array(this.videodataarray[index]),
+          audio: new Uint8Array(this.audiodataarray[index])
+        });
+        index = (index + 1) % this.videodataarray.length;
+      }, 800);
+      // for (let index = 0; index < this.videodataarray.length; index++) {
+      //   const element = this.videodataarray[index];
+      //   this.jmuxer.feed({
+      //     video: new Uint8Array(element)
+      //   });
+      // }
+
+    }
+
+  }
+  _sendData(count: number, maximgnum: number, Bufferary: ArrayBuffer, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer) {
+    var m = msgpack.decode(new Uint8Array(Bufferary));
+    var pcm_combine_arr = [];
+    var h264_combine_arr = [];
+    // console.log(m.gop);
+    for (var num in m.gop) {
+      // 找出第一個為true的key
+      if (m.gop[num].key == true) {
+        flag = true;
+      }
+      if (flag) {
+        // feed video data
+        // h264_combine_arr = h264_combine_arr.concat(Array.from(m.gop[num].v));
+
+        video_buffer[video_buffer.length] = Array.from(m.gop[num].v);
+        if (m.gop[num].key) {
+          key_buffer.push('I');
+        }
+        else {
+          key_buffer.push('P');
+        }
+        // video_buffer.push(m.gop[num].key);
+
+        // feed audio data
+        if (m.gop[num].a) {
+          var pcm_data = this.decode(m.gop[num].a);
+          var pcm_data_arr = this.intTobytesArr(Array.from(pcm_data));
+          // pcm_combine_arr = pcm_combine_arr.concat(pcm_data_arr);
+          audio_buffer[audio_buffer.length] = pcm_data_arr;
+          // pcmPlayer.feed(pcm_data);  
+        }
+      }
+    }
+    // console.log(audio_buffer);
+    var current_key;
+    var temp_video_buffer = video_buffer.slice(0); // clone video_buffer
+    var temp_audio_buffer = audio_buffer.slice(0); // clone audio_buffer
+    var key_buffer_length = key_buffer.length;
+    for (var i = 0; i < key_buffer_length; i++) {
+      current_key = key_buffer[0];
+      if (current_key == 'I')
+        i_count++;
+      if (i_count == 2)
+        break;
+      current_video = current_video.concat(temp_video_buffer[i]);
+      if (temp_audio_buffer[i])
+        current_audio = current_audio.concat(temp_audio_buffer[i]);
+      key_buffer.shift();
+      video_buffer.shift();
+      if (temp_audio_buffer[i])
+        audio_buffer.shift();
+      // console.log('.....................................');
+    }
+    //console.log("count=" + count + " maximgnum=" + maximgnum);
+    if (i_count == 2 || (count + 1) === maximgnum) {
+      var pcm_header = this.setHeader(current_audio);
+      pcm_header = pcm_header.concat(Array.from(current_audio));
+      fdkAac(new Uint8Array(pcm_header), function (err, aac) {
+        if (aac) {
+          const file = ('File' in self)
+            ? new File([aac.buffer], 'test.aac', { type: 'audio/aac' })
+            // Safari does not have File in workers
+            : new Blob([aac.buffer], { type: 'audio/aac' })
+          const event = URL.createObjectURL(file);
+          if (this.audionode == null) {
+            // var node = document.createElement('audio');
+            this.audionode = document.createElement('audio');
+            let node = this.audionode;
+            node.setAttribute("id", "myaudio");
+            node.setAttribute("src", event);
+            node.setAttribute("controls", "true");
+            document.body.appendChild(node);
+          } else {
+            this.audionode.setAttribute("src", event);
+
+          }
+
+
+
+          jmuxer.feed({
+            video: new Uint8Array(current_video),
+            audio: aac,
+            duration: 1000
+          });
+        }
+      });
+      current_video = [];
+      current_audio = [];
+      i_count = 0;
+    }
+
+  }
+
 }
 

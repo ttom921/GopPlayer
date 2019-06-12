@@ -13,10 +13,10 @@ import { SharedAngularMaterialModule } from './share/shared-angular-material/sha
     AppComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     BrowserAnimationsModule,
     FormsModule,
-    HttpClientModule,
     SharedAngularMaterialModule,
     AppRoutingModule
   ],
