@@ -16,7 +16,6 @@ export class AppComponent implements OnInit {
   pcmPlayer: any;
   files = ["1557749607.gop", "1557749608.gop", "1557749609.gop", "1557749610.gop", "1557749611.gop", "1557749612.gop", "1557749613.gop", "1557749614.gop", "1557749615.gop", "1557749616.gop", "1557749617.gop", "picture.jpg"]; // 蔡依林 
   videodataarray = [];
-  audiodataarray = [];
   constructor(
     private http: HttpClient,
     private imageFileService: ImageFileService
@@ -225,7 +224,7 @@ export class AppComponent implements OnInit {
       let maximgnum = files.length;
       let count = 0;
 
-      this._getData(count, maximgnum, Bufferary, false, this.jmuxer,/* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], this.pcmPlayer, this.videodataarray, this.audiodataarray);
+      this._getData(count, maximgnum, Bufferary, false, this.jmuxer,/* video_buffer */[], /* audio_buffer */[], /* key_buffer */[], /* i_count */0, /* current_video */[], /* current_audio */[], this.pcmPlayer, this.videodataarray);
 
 
 
@@ -257,7 +256,7 @@ export class AppComponent implements OnInit {
 
     });
   }
-  _getData(count: number, maximgnum: number, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer, store_audio_buffer) {
+  _getData(count: number, maximgnum: number, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer) {
     if ((count + 1) > maximgnum) return;
     var m = msgpack.decode(new Uint8Array(Bufferary[count]));
     var pcm_combine_arr = [];
@@ -322,15 +321,16 @@ export class AppComponent implements OnInit {
             // Safari does not have File in workers
             : new Blob([aac.buffer], { type: 'audio/aac' })
           const event = URL.createObjectURL(file);
-          var audom = document.getElementById("myaudio");
-          if (audom === null) {
-            var node = document.createElement('audio');
-            node.setAttribute("id", "myaudio")
-            node.setAttribute("src", event);
-            node.setAttribute("controls", "true");
-            document.body.appendChild(node);
-          }
-          store_audio_buffer.push(aac.buffer);
+
+          var node = document.createElement('audio');
+          node.setAttribute("src", event);
+          node.setAttribute("controls", "true");
+          //node.setAttribute("style", "background-color:red; font-size:2em;");
+          //先將聲音元件hide
+          node.setAttribute("style", "display:none;");
+          document.body.appendChild(node);
+
+          //先存下來，之後傳送後在播
           store_video_buffer.push(current_video);
 
           // jmuxer.feed({
@@ -346,26 +346,17 @@ export class AppComponent implements OnInit {
     }
     count++;
     if (count < maximgnum - 1) {
-      this._getData(count, maximgnum, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer, store_audio_buffer);
+      this._getData(count, maximgnum, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer);
     } else {
       console.log("data send end " + this.videodataarray.length);
-      console.log("data send end " + this.audiodataarray.length);
       let index = 0;
       setInterval(() => {
 
         this.jmuxer.feed({
-          video: new Uint8Array(this.videodataarray[index]),
-          audio: new Uint8Array(this.audiodataarray[index])
+          video: new Uint8Array(this.videodataarray[index])
         });
         index = (index + 1) % this.videodataarray.length;
       }, 800);
-      // for (let index = 0; index < this.videodataarray.length; index++) {
-      //   const element = this.videodataarray[index];
-      //   this.jmuxer.feed({
-      //     video: new Uint8Array(element)
-      //   });
-      // }
-
     }
 
   }
