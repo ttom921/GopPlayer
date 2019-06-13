@@ -53,5 +53,7 @@ ng g s services\ImageFile
 ```
 指定安裝material版本
 ```
-npm install --save @angular/material@7.3.7
+npm install --save @angular/material
 ```
+
+
