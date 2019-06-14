@@ -20,5 +20,5 @@ export function secToTime(sec) {
         result += (hours < 10 ? '0' + hours : hours) + ':';
     }
     result += (minutes < 10 ? '0' + minutes : minutes) + ':' + (seconds < 10 ? '0' + seconds : seconds);
-    return "mystest" + result;
+    return "mytest->" + result;
 }
