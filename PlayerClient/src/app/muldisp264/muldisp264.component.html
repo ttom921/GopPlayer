@@ -1,0 +1,23 @@
+<mat-grid-tile-header>
+  {{title}}
+  <div id="inputdiv">
+
+    <input type="file" multiple="multiple" id="file" #file (change)="Upload(file)">
+  </div>
+  <!-- <button mat-icon-button color="primary" (click)="OnChannleEvent()">
+      <mat-icon>pageview</mat-icon>
+    </button> -->
+
+</mat-grid-tile-header>
+<div style="text-align:center">
+  <video id="player0" width="320" height="240" autoplay controls></video>
+  <video id="player1" width="320" height="240" autoplay controls></video>
+  <video id="player2" width="320" height="240" autoplay controls></video>
+  <video id="player3" width="320" height="240" autoplay controls></video>
+</div>
+<div style="text-align:center">
+  <video id="player4" width="320" height="240" autoplay controls></video>
+  <video id="player5" width="320" height="240" autoplay controls></video>
+  <video id="player6" width="320" height="240" autoplay controls></video>
+  <video id="player7" width="320" height="240" autoplay controls></video>
+</div>

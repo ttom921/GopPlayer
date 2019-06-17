@@ -73,7 +73,7 @@ export class H264DataService {
     decoded = (sign === 0) ? (decoded) : (-decoded);
     return (decoded * 8) * -1;
   }
-  get264data(count: number, maximgnum: number, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer, store_audio_buffer) {
+  get264data(count: number, maximgnum: number, Bufferary, flag, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, store_video_buffer, store_audio_buffer) {
     if ((count + 1) > maximgnum) return;
     //從檔案中先解碼
     var m = msgpack.decode(new Uint8Array(Bufferary[count]));
@@ -168,7 +168,7 @@ export class H264DataService {
     }
     count++;
     if (count < maximgnum - 1) {
-      this.get264data(count, maximgnum, Bufferary, flag, jmuxer, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, pcmPlayer, store_video_buffer, store_audio_buffer);
+      this.get264data(count, maximgnum, Bufferary, flag, video_buffer, audio_buffer, key_buffer, i_count, current_video, current_audio, store_video_buffer, store_audio_buffer);
     }
   }
 }

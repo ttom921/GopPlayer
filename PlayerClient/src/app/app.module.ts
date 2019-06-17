@@ -9,12 +9,14 @@ import { AppComponent } from './app.component';
 import { SharedAngularMaterialModule } from './share/shared-angular-material/shared-angular-material.module';
 import { Disp264Component } from './disp264/disp264.component';
 import { Ver1Component } from './ver1/ver1.component';
+import { Muldisp264Component } from './muldisp264/muldisp264.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     Disp264Component,
-    Ver1Component
+    Ver1Component,
+    Muldisp264Component
   ],
   imports: [
     HttpClientModule,
@@ -26,6 +28,6 @@ import { Ver1Component } from './ver1/ver1.component';
   ],
   providers: [],
   bootstrap: [AppComponent],
-  exports: [Disp264Component, Ver1Component]
+  exports: [Disp264Component, Ver1Component, Muldisp264Component]
 })
 export class AppModule { }
