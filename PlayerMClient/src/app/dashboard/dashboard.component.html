@@ -1,0 +1,36 @@
+<mat-toolbar class="demo-app-header" color="primary">
+  <button mat-icon-button (click)="sideNav.toggle()">
+    <mat-icon>{{sideNav.opened ? 'close':'menu'}}</mat-icon>
+  </button>
+  <span>多頻道測試demo</span>
+  <!-- 在這之後的都會被推到右邊去 -->
+  <span class="toolbar-seprator"></span>
+  <button mat-icon-button>
+    <mat-icon>message</mat-icon>
+  </button>
+  <button mat-icon-button>
+    <mat-icon>exit_to_app</mat-icon>
+  </button>
+
+</mat-toolbar>
+
+<mat-sidenav-container class="demo-app-container">
+  <mat-sidenav #sideNav (opened)="opened()" (closed)="closed()">我是左邊選單
+    <mat-nav-list>
+      <h3 matSubheader>示範用頁面</h3>
+      <a [routerLink]="['/', 'dashboard', 'survey']" mat-list-item>問卷調查</a>
+      <a [routerLink]="['/', 'dashboard', 'blog']" mat-list-item>部落格</a>
+      <a [routerLink]="['/', 'dashboard', 'inbox']" mat-list-item>收件夾</a>
+      <mat-divider></mat-divider>
+      <!-- 另外一組選單 -->
+      <h3 matSubheader>其他頁面</h3>
+      <a [routerLink]="['/']" mat-list-item>首頁</a>
+      <a [routerLink]="['/']" mat-list-item>Google</a>
+      <a [routerLink]="['/']" mat-list-item>Facebook</a>
+    </mat-nav-list>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

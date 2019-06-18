@@ -1,0 +1,48 @@
+<div>
+  <mat-grid-tile-header>
+    ===========================
+    <!-- {{title}} -->
+    <div id="inputdiv">
+
+      <input type="file" multiple="multiple" id="file" #file (change)="Upload(file)">
+    </div>
+    <!-- <button mat-icon-button color="primary" (click)="OnChannleEvent()">
+              <mat-icon>pageview</mat-icon>
+            </button> -->
+
+  </mat-grid-tile-header>
+</div>
+
+<div>
+  <mat-grid-list cols="4" rowHeight="200px" gutterSize="0.5em">
+    <!-- <mat-grid-tile *ngFor="let item of channels">
+        <app-disp264 #{{item}} [title]="item"></app-disp264>
+      </mat-grid-tile> -->
+    <mat-grid-tile style="background: red">
+      <app-disp264 #player0 [title]="channels[0]"></app-disp264>
+    </mat-grid-tile>
+    <mat-grid-tile style="background: green">
+      <app-disp264 #player1 [title]="channels[1]"></app-disp264>
+    </mat-grid-tile>
+    <mat-grid-tile style="background: blue">
+      <app-disp264 #player2 [title]="channels[2]"></app-disp264>
+    </mat-grid-tile>
+    <mat-grid-tile style="background: yellow">
+      <app-disp264 #player3 [title]="channels[3]"></app-disp264>
+    </mat-grid-tile>
+
+    <mat-grid-tile style="background: red">
+      <app-disp264 #player4 [title]="channels[4]"></app-disp264>
+    </mat-grid-tile>
+    <mat-grid-tile style="background: green">
+      <app-disp264 #player5 [title]="channels[5]"></app-disp264>
+    </mat-grid-tile>
+    <mat-grid-tile style="background: blue">
+      <app-disp264 #player6 [title]="channels[6]"></app-disp264>
+    </mat-grid-tile>
+    <mat-grid-tile style="background: yellow">
+      <app-disp264 #player7 [title]="channels[7]"></app-disp264>
+    </mat-grid-tile>
+
+  </mat-grid-list>
+</div>

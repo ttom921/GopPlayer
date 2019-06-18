@@ -4,27 +4,11 @@
 ### PlayerClient
 是以alan的專案來轉成angular8版本
 
-### PlayerjMuxer
+### PlayerMClient
 
-測試原來的作者的專案，要以sourcecode的方式來播放。<https://github.com/samirkumardas/jmuxer>
+測議多個播放加上Angular Material
 
-因為作者是使用`ES6`的專案，所以要轉換成可以執行的版本，因為ng的專案已建立好所以直接拿來用
-
-首先先建立專案
-
-```bash
-ng new PlayerjMuxer
-```
-
-下載
-
-```
-npm install --save jmuxer
-```
-
-目前將js轉成ts
-
-### jmuxer
+### jmuxer(原版可以sourcedebug)
 
 先從git將專案clone下來
 
@@ -93,7 +77,25 @@ npm run dev
 **注意**有時候中斷不工作，重新中斷執行的程式再重新起動
 
 
+### PlayerjMuxer(目前不用)
 
+測試原來的作者的專案，要以sourcecode的方式來播放。<https://github.com/samirkumardas/jmuxer>
+
+因為作者是使用`ES6`的專案，所以要轉換成可以執行的版本，因為ng的專案已建立好所以直接拿來用
+
+首先先建立專案
+
+```bash
+ng new PlayerjMuxer
+```
+
+下載
+
+```
+npm install --save jmuxer
+```
+
+目前將js轉成ts
 
 
 

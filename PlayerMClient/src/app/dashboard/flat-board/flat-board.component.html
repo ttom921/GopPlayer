@@ -1,0 +1,45 @@
+<div>
+  <mat-grid-tile-header>
+    ===========================
+    <!-- {{title}} -->
+    <div id="inputdiv">
+
+      <input type="file" multiple="multiple" id="file" #file (change)="Upload(file)">
+    </div>
+    <!-- <button mat-icon-button color="primary" (click)="OnChannleEvent()">
+                <mat-icon>pageview</mat-icon>
+              </button> -->
+
+  </mat-grid-tile-header>
+</div>
+
+<div>
+
+  <app-disp264 class="display264" #player0 [title]="channels[0]"></app-disp264>
+
+
+  <app-disp264 class="display264" #player1 [title]="channels[1]"></app-disp264>
+
+
+  <app-disp264 class="display264" #player2 [title]="channels[2]"></app-disp264>
+
+
+  <app-disp264 class="display264" #player3 [title]="channels[3]"></app-disp264>
+
+
+
+
+
+</div>
+<div>
+  <app-disp264 class="display264" #player4 [title]="channels[4]"></app-disp264>
+
+  <app-disp264 class="display264" #player5 [title]="channels[5]"></app-disp264>
+
+
+  <app-disp264 class="display264" #player6 [title]="channels[6]"></app-disp264>
+
+
+  <app-disp264 class="display264" #player7 [title]="channels[7]"></app-disp264>
+
+</div>
